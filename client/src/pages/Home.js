@@ -11,6 +11,7 @@ import Loader from "../components/Loader";
 import CategorySelection from "../components/Layout/CategorySelection";
 import CarouselHome from "../components/Layout/CarouselHome";
 import { ServerAPI } from "..";
+import FilterByPrice from "../components/Layout/FilterByPrice";
 
 const { Meta } = Card;
 
@@ -149,6 +150,22 @@ const Home = () => {
           radio,
         }
       );
+      // console.log(checked, radio);
+      setProducts(data?.products);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const filters = async (radios) => {
+    try {
+      const { data } = await axios.post(
+        `${ServerAPI}/api/v1/product/product-filters`,
+        {
+          checked,
+          radio: radios,
+        }
+      );
       setProducts(data?.products);
     } catch (error) {
       console.log(error);
@@ -176,31 +193,31 @@ const Home = () => {
                 </Checkbox>
               ))}
             </div>
-            {/* price filter */}
-            <h4 className="ms-4 mt-4">Filter by price</h4>
-            <div className="d-flex flex-column ms-4">
-              <Radio.Group onChange={(e) => setRadio(e.target.value)}>
-                {Prices?.map((p) => (
-                  <div key={p._id}>
-                    <Radio value={p.array}>{p.name}</Radio>
-                  </div>
-                ))}
-              </Radio.Group>
-            </div>
-            <div className="d-flex flex-column mt-4 ms-4">
-              <button
-                className="btn btn-danger"
-                onClick={() => window.location.reload()}
-              >
-                Reset Filters
-              </button>
-            </div>
           </div>
         </div>
 
-        {/* <div className="col-md-9 m-4 w-100"> */}
-        <CarouselHome products={products} getAllProducts={getAllProducts} />
-        {/* </div> */}
+        {/* price filter */}
+        <h4 className="ms-4 mt-4">Filter by price</h4>
+        <div className="d-flex flex-column ms-4">
+          <Radio.Group onChange={(e) => setRadio(e.target.value)}>
+            {Prices?.map((p) => (
+              <div key={p._id}>
+                <Radio value={p.array}>{p.name}</Radio>
+              </div>
+            ))}
+          </Radio.Group>
+        </div>
+        <div className="d-flex flex-column mt-4 ms-4">
+          <button
+            className="btn btn-danger"
+            onClick={() => window.location.reload()}
+          >
+            Reset Filters
+          </button>
+        </div>
+
+        <CarouselHome />
+
         <CategorySelection
           categories={categories}
           getAllProductsByCat={getAllProductsByCat}
@@ -208,6 +225,8 @@ const Home = () => {
 
         <div className="col-md-9 m-4 w-100">
           <h1 className="text-center">All Products</h1>
+          <FilterByPrice filters={filters} />
+
           <div
             className="d-flex flex-wrap"
             style={{ justifyContent: "space-evenly" }}
