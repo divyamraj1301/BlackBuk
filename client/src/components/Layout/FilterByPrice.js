@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Prices } from "../Prices";
 
-const FilterByPrice = ({ filters }) => {
+const FilterByPrice = ({ filters, updateRadio }) => {
   const [radio, setRadio] = useState(null);
+
 
   return (
     <div className="dropdown">
@@ -21,7 +22,8 @@ const FilterByPrice = ({ filters }) => {
             <button
               className="dropdown-item"
               onClick={() => {
-                filters(p.array);
+                filters(p.array)
+                updateRadio(p.array)
               }}
             >
               {p.name}

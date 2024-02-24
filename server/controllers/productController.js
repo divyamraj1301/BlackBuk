@@ -191,10 +191,12 @@ export const productByCategory = async (req, res) => {
     console.log(products); // Just for debugging, you can remove this line if not needed
 
     if (!products || products.length === 0) {
-      return res.status(404).json({ message: "No products found for this category ID" });
+      return res
+        .status(404)
+        .json({ message: "No products found for this category ID" });
     }
 
-    res.json({products}); // Send the products as JSON response
+    res.json({ products }); // Send the products as JSON response
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
@@ -205,9 +207,13 @@ export const productFiltersController = async (req, res) => {
   try {
     const { checked, radio } = req.body;
     let args = {};
-    if (checked.length > 0) args.category = checked;
+
+    if (checked.length > 0) {
+      args.category = { $in: checked }; // Use $in to match any category in the checked array
+    }
     if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
     const products = await productModel.find(args);
+    console.log(products.length);
     res.status(200).send({
       success: true,
       products,

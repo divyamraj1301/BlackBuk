@@ -12,7 +12,6 @@ import CategorySelection from "../components/Layout/CategorySelection";
 import CarouselHome from "../components/Layout/CarouselHome";
 import { ServerAPI } from "..";
 import FilterByPrice from "../components/Layout/FilterByPrice";
-import FilterByCategory from "../components/Layout/FilterByCategory";
 
 const { Meta } = Card;
 
@@ -42,6 +41,7 @@ const Home = () => {
   };
 
   useEffect(() => {
+    getAllProducts();
     getAllCategory();
     getTotal();
   }, []);
@@ -123,19 +123,22 @@ const Home = () => {
     }
   };
 
-  const handleFilter = (value, id) => {
+  const handleFilter = (id) => {
     let all = [...checked];
-    if (value) {
+
+    const index = all.indexOf(id);
+
+    if (index === -1) {
       all.push(id);
     } else {
-      all = all.filter((c) => c !== id);
+      all.splice(index, 1);
+    }
+
+    if (all.length < 1) {
+      getAllProducts();
     }
     setChecked(all);
   };
-
-  useEffect(() => {
-    if (!checked.length || !radio.length) getAllProducts();
-  }, [checked.length, radio.length]);
 
   useEffect(() => {
     if (checked.length || radio.length) filterProduct();
@@ -151,11 +154,15 @@ const Home = () => {
           radio,
         }
       );
-      // console.log(checked, radio);
+      console.log(checked, radio);
       setProducts(data?.products);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const updateRadio = async (data) => {
+    setRadio(data);
   };
 
   const filters = async (radios) => {
@@ -167,56 +174,16 @@ const Home = () => {
           radio: radios,
         }
       );
+
       setProducts(data?.products);
     } catch (error) {
       console.log(error);
     }
   };
-  // --------------------------------------------------------------------------
 
   return (
     <Layout title={"Best Offers - Ecommerce"}>
       <div className="row m-2">
-        <div className="col-md-2">
-          {/* category filter */}
-          <div className="text-center">
-            <h4 className="ms-4">Filter by category</h4>
-            <div
-              className="d-flex ms-4 m-4"
-              style={{ justifyContent: "space-evenly" }}
-            >
-              {categories?.map((c) => (
-                <Checkbox
-                  key={c._id}
-                  onChange={(e) => handleFilter(e.target.checked, c._id)}
-                >
-                  {c.name}
-                </Checkbox>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* price filter */}
-        <h4 className="ms-4 mt-4">Filter by price</h4>
-        <div className="d-flex flex-column ms-4">
-          <Radio.Group onChange={(e) => setRadio(e.target.value)}>
-            {Prices?.map((p) => (
-              <div key={p._id}>
-                <Radio value={p.array}>{p.name}</Radio>
-              </div>
-            ))}
-          </Radio.Group>
-        </div>
-        <div className="d-flex flex-column mt-4 ms-4">
-          <button
-            className="btn btn-danger"
-            onClick={() => window.location.reload()}
-          >
-            Reset Filters
-          </button>
-        </div>
-
         <CarouselHome />
 
         <CategorySelection
@@ -228,23 +195,47 @@ const Home = () => {
           <h1 className="text-center">All Products</h1>
 
           <div
-            className="d-flex"
+            className="d-flex flex-wrap"
             style={{
               justifyContent: "space-around",
               flexDirection: "flex",
               display: "flex",
             }}
           >
-            <FilterByPrice filters={filters} />
-            <FilterByCategory filters={filters} />
-            {/* <div className="d-flex flex-column mt-4 ms-4"> */}
+            <FilterByPrice filters={filters} updateRadio={updateRadio} />
+
+            <div className="dropdown">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                type="button"
+                id="dropdownMenuButton"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Filter by category
+              </button>
+              <ul
+                className="dropdown-menu"
+                aria-labelledby="dropdownMenuButton"
+              >
+                {categories?.map((c) => (
+                  <Checkbox key={c._id} onChange={(e) => handleFilter(c._id)}>
+                    {c.name}
+                  </Checkbox>
+                ))}
+              </ul>
+            </div>
+
             <button
               className="btn btn-danger"
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                setChecked([]);
+                setRadio([]);
+                getAllProducts();
+              }}
             >
               Reset Filters
             </button>
-            {/* </div> */}
           </div>
 
           <div
@@ -260,7 +251,6 @@ const Home = () => {
                   width: 300,
                   margin: "20px",
                 }}
-                // cover={<img alt="example" src={p.photo} />}
                 cover={
                   isData ? (
                     <Skeleton.Image style={{ height: 200, width: 300 }} />
