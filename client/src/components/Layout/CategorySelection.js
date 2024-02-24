@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Card, Col, Row } from "antd";
+import { useNavigate } from "react-router-dom";
 
 export default function CategorySelection({ categories, getAllProductsByCat }) {
   // State to track hover state for each column
   const [hoverStates, setHoverStates] = useState([false, false, false]);
+  const navigate = useNavigate();
 
   // Function to handle mouse enter event
   const handleMouseEnter = (index) => {
@@ -56,6 +58,7 @@ export default function CategorySelection({ categories, getAllProductsByCat }) {
               }}
               onClick={() => {
                 getAllProductsByCat(category._id);
+                // navigate(`/category/${category.slug}`);
               }}
             />
             <div
@@ -70,7 +73,8 @@ export default function CategorySelection({ categories, getAllProductsByCat }) {
                 cursor: "pointer",
               }}
               onClick={() => {
-                getAllProductsByCat(category._id);
+                // getAllProductsByCat(category._id);
+                navigate(`/category/${category.slug}`);
               }}
             >
               <p

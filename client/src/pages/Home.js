@@ -12,6 +12,7 @@ import CategorySelection from "../components/Layout/CategorySelection";
 import CarouselHome from "../components/Layout/CarouselHome";
 import { ServerAPI } from "..";
 import FilterByPrice from "../components/Layout/FilterByPrice";
+import FilterByCategory from "../components/Layout/FilterByCategory";
 
 const { Meta } = Card;
 
@@ -175,7 +176,7 @@ const Home = () => {
 
   return (
     <Layout title={"Best Offers - Ecommerce"}>
-      <div className="row mt-4 m-4">
+      <div className="row m-2">
         <div className="col-md-2">
           {/* category filter */}
           <div className="text-center">
@@ -223,13 +224,32 @@ const Home = () => {
           getAllProductsByCat={getAllProductsByCat}
         />
 
-        <div className="col-md-9 m-4 w-100">
+        <div className="col-md-9 m-2 w-100">
           <h1 className="text-center">All Products</h1>
-          <FilterByPrice filters={filters} />
+
+          <div
+            className="d-flex"
+            style={{
+              justifyContent: "space-around",
+              flexDirection: "flex",
+              display: "flex",
+            }}
+          >
+            <FilterByPrice filters={filters} />
+            <FilterByCategory filters={filters} />
+            {/* <div className="d-flex flex-column mt-4 ms-4"> */}
+            <button
+              className="btn btn-danger"
+              onClick={() => window.location.reload()}
+            >
+              Reset Filters
+            </button>
+            {/* </div> */}
+          </div>
 
           <div
             className="d-flex flex-wrap"
-            style={{ justifyContent: "space-evenly" }}
+            style={{ justifyContent: "space-between" }}
           >
             {products?.map((p, index) => (
               <Card

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Prices } from "../Prices";
-import { ServerAPI } from "../..";
 
 const FilterByPrice = ({ filters }) => {
   const [radio, setRadio] = useState(null);
@@ -14,7 +13,7 @@ const FilterByPrice = ({ filters }) => {
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        {radio ? radio.name : "Select Option"}
+        {radio ? radio.name : "Filter by Price"}
       </button>
       <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton">
         {Prices?.map((p) => (
